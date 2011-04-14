@@ -5,7 +5,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "sneakers"
-    gem.summary = %Q{A wrapper for bulding asynchronous apps in a synchronous way}
+    gem.summary = %Q{A wrapper for building asynchronous apps in a synchronous way}
     gem.description = %Q{A wrapper built to help speed up the development of asynchronous apps, and make them easier to maintain.}
     gem.email = "jay.palekar@gmail.com"
     gem.homepage = "http://github.com/bluejay/sneakers"

@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "lib/sneakers/deferrable.rb",
      "lib/sneakers/logger.rb",
      "lib/sneakers/response.rb",
+     "sneakers.gemspec",
      "spec/sneakers_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
@@ -36,7 +37,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.0}
-  s.summary = %q{A wrapper for bulding asynchronous apps in a synchronous way}
+  s.summary = %q{A wrapper for building asynchronous apps in a synchronous way}
   s.test_files = [
     "spec/sneakers_spec.rb",
      "spec/spec_helper.rb"
