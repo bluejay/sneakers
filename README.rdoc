@@ -1,6 +1,51 @@
-= sneakers
+= Sneakers
 
-Description goes here.
+A small library that makes building asynchronous web apps with EventMachine and Rack easy.
+
+== Installing
+  $ git clone git://github.com/bluejay/sneakers.git
+  $ cd sneakers
+  $ gem build sneakers.gemspec
+  $ gem install pkg/sneakers-0.0.0.gem
+
+== Your First App
+Apps in Sneakers run like regular rack apps. Simple pass a block to the Sneaker method, and it returns an async rack app.
+  #config.ru
+  run Sneakers {
+    send "Hello World"
+  }
+The Application is called everytime a new request is made, and then runs the code in the block.
+
+== Note
+Sneakers is very untested, and was hacked together in the midst of two periods of my biochem class. It should only be used for experiment purposes.
+As of right now, the only server on which I have tested it on is Thin, and it probably only works with ruby 1.9.2.
+
+== Features
+
+=== Fibers
+Everything runs within a fiber so you can asynchronous method calls without blocking the reactor.
+
+=== Run Synchronous Tasks without blocking
+In order to run code that was meant to be synchronous, in an manner use the task method.
+  Sneakers {
+    foo = 0
+    task do
+      sleep 1
+      foo += 1
+    end
+    send foo
+  }
+If the order of execution doesn't matter, then use async task which operates in the same manner, except that it takes both a proc and callback.
+
+=== Deferrable Response
+Use deferrable responses for long running requests for which you want to send the headers earlier than response body.
+  Sneakers {
+    defer_response
+    EM::add_timer(1) do
+      send "This is a deferred response"
+      finish # Finishes the response
+    end
+  }
 
 == Note on Patches/Pull Requests
  
