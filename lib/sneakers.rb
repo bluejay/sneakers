@@ -3,5 +3,6 @@ module Sneakers
 
   autoload :Logger,       "#{ROOT}/logger.rb"
   autoload :Application,  "#{ROOT}/application.rb"
+  autoload :Deferrable,   "#{ROOT}/deferrable.rb"
   autoload :Response,     "#{ROOT}/response.rb"
 end

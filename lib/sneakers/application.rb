@@ -3,6 +3,7 @@ require "fiber"
 module Sneakers
   class Application
     include Sneakers::Logger
+    include Sneakers::Deferrable
     
     # The request.
     #
