@@ -6,7 +6,7 @@ A small library that makes building asynchronous web apps with EventMachine and 
   $ git clone git://github.com/bluejay/Sneakers.git
   $ cd sneakers
   $ gem build sneakers.gemspec
-  $ gem install pkg/sneakers-0.0.0.gem
+  $ gem install sneakers-0.0.0.gem
 
 == Your First App
 Apps in Sneakers run like regular rack apps. Simple pass a block to the Sneaker method, and it returns an async rack app.
