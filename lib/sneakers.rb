@@ -7,15 +7,13 @@ module Sneakers
 
   autoload :Logger,       "#{ROOT}/logger.rb"
   autoload :Application,  "#{ROOT}/application.rb"
+  autoload :Controller,   "#{ROOT}/controller.rb"
   autoload :Deferrable,   "#{ROOT}/deferrable.rb"
   autoload :Response,     "#{ROOT}/response.rb"
 end
 
 def sneakers(&action)
-  return Proc.new do |env|
-    application = Sneakers::Application.new(env)
-    application.__call__(&action)
-  end
+  return Sneakers::Application.new(&action)
 end
 
 alias Sneakers sneakers
