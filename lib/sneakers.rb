@@ -11,9 +11,11 @@ module Sneakers
   autoload :Response,     "#{ROOT}/response.rb"
 end
 
-def Sneakers(&action)
+def sneakers(&action)
   return Proc.new do |env|
     application = Sneakers::Application.new(env)
     application.__call__(&action)
   end
 end
+
+alias Sneakers sneakers
