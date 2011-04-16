@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jay Palekar"]
-  s.date = %q{2011-04-14}
+  s.date = %q{2011-04-16}
   s.description = %q{A wrapper built to help speed up the development of asynchronous apps, and make them easier to maintain.}
   s.email = %q{jay.palekar@gmail.com}
   s.extra_rdoc_files = [
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "lib/sneakers.rb",
      "lib/sneakers/application.rb",
+     "lib/sneakers/controller.rb",
      "lib/sneakers/deferrable.rb",
      "lib/sneakers/logger.rb",
      "lib/sneakers/response.rb",

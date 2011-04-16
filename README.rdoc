@@ -25,6 +25,18 @@ As of right now, the only server on which I have tested it on is Thin, and it pr
 === Fibers
 Everything runs within a fiber so you can asynchronous method calls without blocking the reactor.
 
+=== Controllers
+Sneakers is very easy to use in an existing controller. Simply include it within the class and specify which method to call. The two ways to do this are to either: specify an @action before calling __call__(env) or to include it within the env as 'sneakers.action'. __call__(env) is aliased to call so if you specify the action in a middleware, router, etc. no changes need to be added.
+
+  class Controller
+    include Sneakers::Controller
+    
+    def call(env)
+      @action = :myMethod # Or you could use: env['sneakers.action'] = :myMethod
+      __call__(env) # This will call the method for you.
+    end
+  end
+
 === Run Synchronous Tasks without blocking
 In order to run code that was meant to be synchronous, in an manner use the task method.
   Sneakers {
