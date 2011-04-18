@@ -3,28 +3,48 @@
 A small library that makes building asynchronous web apps with EventMachine and Rack easy.
 
 == Installing
-  $ git clone git://github.com/bluejay/Sneakers.git
+  $ git clone git://github.com/bluejay/sneakers.git
   $ cd sneakers
   $ gem build sneakers.gemspec
-  $ gem install sneakers-0.0.0.gem
+  $ gem install sneakers-0.1.0.gem
 
 == Your First App
 Apps in Sneakers run like regular rack apps. Simple pass a block to the Sneaker method, and it returns an async rack app.
   #config.ru
-  run Sneakers {
+  app = sneakers do
     send "Hello World"
   }
+  run app
 The Application is called everytime a new request is made, and then runs the code in the block.
 
 == Note
-Sneakers is very untested, and was hacked together in the midst of two periods of my biochem class. It should only be used for experiment purposes.
-As of right now, the only server on which I have tested it on is Thin, and it probably only works with ruby 1.9.2.
+Sneakers is very untested and was hacked together in the midst of two periods of my biochem class. It should only be used for experimentation purposes.
+As of right now the only server on which I have tested it on is Thin, and it probably only works with ruby 1.9.2.
 
 == Features
 
 === Fibers
-Everything runs within a fiber so you can asynchronous method calls without blocking the reactor.
+Everything runs within a fiber so you can use asynchronous method calls without blocking the reactor.
+  class Controller
+    include Sneakers::Controller
 
+    def call(env)
+      @action = :run
+      __call__(env)
+    end
+
+    def async_method
+      EM::add_timer(1) do
+        fiber.resume "Hello World"
+      end
+      return Fiber.yield
+    end
+
+    def run
+      # This will write the value "Hello World" after pausing for 1 second, without blocking the reactor.
+      send async_method
+    end
+  end
 === Controllers
 Sneakers is very easy to use in an existing controller. Simply include it within the class and specify which method to call. The two ways to do this are to either: specify an @action before calling __call__(env) or to include it within the env as 'sneakers.action'. __call__(env) is aliased to call so if you specify the action in a middleware, router, etc. no changes need to be added.
 
@@ -38,7 +58,7 @@ Sneakers is very easy to use in an existing controller. Simply include it within
   end
 
 === Run Synchronous Tasks without blocking
-In order to run code that was meant to be synchronous, in an manner use the task method.
+In order to run code that was meant to be synchronous use the task method.
   Sneakers {
     foo = 0
     task do
@@ -47,7 +67,7 @@ In order to run code that was meant to be synchronous, in an manner use the task
     end
     send foo
   }
-If the order of execution doesn't matter, then use async task which operates in the same manner, except that it takes both a proc and callback.
+If the order of execution doesn't matter, then use async_task which operates in the same manner, except that it takes both a proc and callback, and doesn't wait for the block to complete before going to the next line.
 
 === Deferrable Response
 Use deferrable responses for long running requests for which you want to send the headers earlier than response body.
