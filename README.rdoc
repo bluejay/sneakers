@@ -13,7 +13,7 @@ Apps in Sneakers run like regular rack apps. Simple pass a block to the Sneaker 
   #config.ru
   app = sneakers do
     send "Hello World"
-  }
+  end
   run app
 The Application is called everytime a new request is made, and then evaluates the code in the block.
 
