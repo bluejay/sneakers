@@ -20,6 +20,7 @@ module Sneakers
       klass = self.class
       action = env[klass.env_action_key] || @action || klass.default_action
       
+      @env      = env
       @response = Sneakers::Response.new(env)
       
       # A fiber wrapper for the action
