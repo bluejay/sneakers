@@ -15,7 +15,7 @@ Apps in Sneakers run like regular rack apps. Simple pass a block to the Sneaker 
     send "Hello World"
   }
   run app
-The Application is called everytime a new request is made, and then runs the code in the block.
+The Application is called everytime a new request is made, and then evaluates the code in the block.
 
 == Note
 Sneakers is very untested and was hacked together in the midst of two periods of my biochem class. It should only be used for experimentation purposes.
@@ -27,11 +27,6 @@ As of right now the only server on which I have tested it on is Thin, and it pro
 Everything runs within a fiber so you can use asynchronous method calls without blocking the reactor.
   class Controller
     include Sneakers::Controller
-
-    def call(env)
-      @action = :run
-      __call__(env)
-    end
 
     def async_method
       EM::add_timer(1) do
@@ -46,14 +41,17 @@ Everything runs within a fiber so you can use asynchronous method calls without 
     end
   end
 === Controllers
-Sneakers is very easy to use in an existing controller. Simply include it within the class and specify which method to call. The two ways to do this are to either: specify an @action before calling __call__(env) or to include it within the env as 'sneakers.action'. __call__(env) is aliased to call so if you specify the action in a middleware, router, etc. no changes need to be added.
+Sneakers is very easy to use in an existing controller. Simply include it within the class and specify which method to call. The two ways to do this are to either: specify an @action before calling __call__(env) or to include it within the env as 'sneakers.action'. __call__(env) is aliased to call so if you specify the action in a middleware, router, etc. no changes need to be added. If you don't want to use 'sneakers.action' as the key where the action is located, use action_key "myKey". You can also set a default action, which is called if no action is specified by using default_to :myMethod. If not specified, the default action is #run.
 
   class Controller
     include Sneakers::Controller
-    
+
+    # default_to :run
+    # action_key "random.key"
+
     def call(env)
       @action = :myMethod # Or you could use: env['sneakers.action'] = :myMethod
-      __call__(env) # This will call the method for you.
+      __call__(env) # This will run the action for you.
     end
   end
 
