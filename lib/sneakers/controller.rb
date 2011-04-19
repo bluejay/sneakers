@@ -17,7 +17,9 @@ module Sneakers
 
     # Call the action.
     def __call__(env, *args)
-      action = env['sneakers.action'] || @action
+      klass = self.class
+      action = env[klass.env_action_key] || @action || klass.default_action
+      
       @response = Sneakers::Response.new(env)
       
       # A fiber wrapper for the action
@@ -60,9 +62,28 @@ module Sneakers
       @response.write(data)
     end
 
+    module ClassMethods
+      attr_reader :default_action, :env_action_key
+      
+      def action_key(hash_key)
+        @env_action_key = hash_key
+      end
+      
+      def default_to(method)
+        @default_action = method
+      end
+      
+      def self.extended(base)
+        base.action_key 'sneakers.action'
+        base.default_to :run
+      end
+    end
+
+
     def self.included(base)
       base.instance_eval do
         include Sneakers::Logger
+        extend(ClassMethods)
       end
     end
   end
