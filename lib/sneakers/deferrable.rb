@@ -11,13 +11,13 @@ module Sneakers
     
     def async_task(operation = nil, callback= nil, &block)
       # Smartly determines what the block is for.
-      if not operation
-        operation = block if block
-      elsif not callback
-        callback = block if block
+      if operation.nil?
+        operation = block if block_given?
+      elsif callback.nil?
+        callback = block if block_given?
       end
 
-      callback = Proc.new unless callback
+      callback = Proc.new{} if callback.nil?
       
       EM::defer(operation, callback)
     end
