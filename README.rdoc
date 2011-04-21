@@ -10,13 +10,11 @@ A small library that makes building asynchronous web apps with EventMachine and 
 
 == Your First App
 Apps in Sneakers run like regular rack apps. Simple pass a block to the Sneaker method, and it returns an async rack app.
-```ruby
-#config.ru
-app = sneakers do
-  send "Hello World"
-end
-run app
-```
+  #config.ru
+  app = sneakers do
+    send "Hello World"
+  end
+  run app
 The Application is called everytime a new request is made, and then evaluates the code in the block.
 
 == Note
@@ -27,65 +25,60 @@ As of right now the only server on which I have tested it on is Thin, and it pro
 
 === Fibers
 Everything runs within a fiber so you can use asynchronous method calls without blocking the reactor.
-```ruby
-class Controller
-  include Sneakers::Controller
+  class Controller
+    include Sneakers::Controller
 
-  def async_method
-    EM::add_timer(1) do
-      fiber.resume "Hello World"
+    def async_method
+      EM::add_timer(1) do
+        fiber.resume "Hello World"
+      end
+      return Fiber.yield
     end
-    return Fiber.yield
-  end
 
-  def run
-    # This will write the value "Hello World" after pausing for 1 second, without blocking the reactor.
-    send async_method
+    def run
+      # This will write the value "Hello World" after pausing for 1 second, without blocking the reactor.
+      send async_method
+    end
   end
-end
-```
 === Controllers
 Sneakers is very easy to use in an existing controller. Simply include it within the class and specify which method to call. The two ways to do this are to either: specify an @action before calling or to include it within the env as 'sneakers.action'. If you don't want to use 'sneakers.action' as the key where the action is located, use action_key "myKey". If no action is specified, it defaults to index. #before_call is called before the action is handled.
-```ruby
-class Controller
-  include Sneakers::Controller
 
-  # action_key "random.key"
-  
-  def hello
-    send "This was a triumph"
+  class Controller
+    include Sneakers::Controller
+
+    # action_key "random.key"
+    
+    def hello
+      send "This was a triumph"
+    end
+    
+    def before_call
+      @action = :hello
+    end
   end
-  
-  def before_call
-    @action = :hello
-  end
-end
-```
+
 === Run Synchronous Tasks without blocking
 In order to run code that was meant to be synchronous use the task method.
-```ruby
-sneakers {
-  foo = 0
-  task do
-    sleep 1
-    foo += 1
-  end
-  send foo
-}
-```
+  Sneakers {
+    foo = 0
+    task do
+      sleep 1
+      foo += 1
+    end
+    send foo
+  }
 If the order of execution doesn't matter, then use async_task which operates in the same manner, except that it takes both a proc and callback, and doesn't wait for the block to complete before going to the next line.
 
 === Deferrable Response
 Use deferrable responses for long running requests for which you want to send the headers earlier than response body.
-```ruby
-Sneakers {
-  defer_response
-  EM::add_timer(1) do
-    send "This is a deferred response"
-    finish # Finishes the response
-  end
-}
-```
+  Sneakers {
+    defer_response
+    EM::add_timer(1) do
+      send "This is a deferred response"
+      finish # Finishes the response
+    end
+  }
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
