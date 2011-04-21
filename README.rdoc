@@ -41,17 +41,19 @@ Everything runs within a fiber so you can use asynchronous method calls without 
     end
   end
 === Controllers
-Sneakers is very easy to use in an existing controller. Simply include it within the class and specify which method to call. The two ways to do this are to either: specify an @action before calling __call__(env) or to include it within the env as 'sneakers.action'. __call__(env) is aliased to call so if you specify the action in a middleware, router, etc. no changes need to be added. If you don't want to use 'sneakers.action' as the key where the action is located, use action_key "myKey". You can also set a default action, which is called if no action is specified by using default_to :myMethod. If not specified, the default action is #run.
+Sneakers is very easy to use in an existing controller. Simply include it within the class and specify which method to call. The two ways to do this are to either: specify an @action before calling or to include it within the env as 'sneakers.action'. If you don't want to use 'sneakers.action' as the key where the action is located, use action_key "myKey". If no action is specified, it defaults to index. #before_call is called before the action is handled.
 
   class Controller
     include Sneakers::Controller
 
-    # default_to :run
     # action_key "random.key"
-
-    def call(env)
-      @action = :myMethod # Or you could use: env['sneakers.action'] = :myMethod
-      __call__(env) # This will run the action for you.
+    
+    def hello
+      send "This was a triumph"
+    end
+    
+    def before_call
+      @action = :hello
     end
   end
 

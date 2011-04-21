@@ -17,8 +17,8 @@ module Sneakers
     def initialize(&block)
       @block = block
     end
-
-    def run
+    
+    def index
       @request = Rack::Request.new(@env)
       instance_eval(&@block)
     end

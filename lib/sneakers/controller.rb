@@ -15,11 +15,21 @@ module Sneakers
     # @return [Fiber]
     attr_accessor :fiber
 
+    # Creates a duplicate of the controller for each request.
+    def call(env, *args)
+      dup.call!(env, *args)
+    end
+
     # Call the action.
-    def __call__(env, *args)
-      klass = self.class
-      action = env[klass.env_action_key] || @action || klass.default_action
+    def call!(env, *args)
+      # A preprocessing method
+      before_call() if respond_to?(:before_call)
       
+      # Determines the action to be called
+      klass = self.class
+      action = env[klass.env_action_key] || @action || :index
+      
+      # Sets the instance variables, especially the response
       @env      = env
       @response = Sneakers::Response.new(env)
       
@@ -28,7 +38,11 @@ module Sneakers
         # Call the action
         if respond_to?(action)
           __send__(action, *args)
-        elsif respond_to?(:not_found) then not_found()
+          
+        # 404 methods
+        elsif respond_to?(:not_found)
+          @response.status = 404
+          not_found()
         else 
           @response.status = 404
           @response.header.merge!({'Content-Type' => "text/html"})
@@ -46,8 +60,6 @@ module Sneakers
       @response.finish
     end    
 
-    alias call __call__
-
     # Defers the response.
     def defer_response(*args)
       @response.defer
@@ -63,20 +75,16 @@ module Sneakers
       @response.write(data)
     end
 
+    # Allow for the use of a specific has key to determine the action.
     module ClassMethods
-      attr_reader :default_action, :env_action_key
+      attr_reader :env_action_key
       
       def action_key(hash_key)
         @env_action_key = hash_key
       end
       
-      def default_to(method)
-        @default_action = method
-      end
-      
       def self.extended(base)
         base.action_key 'sneakers.action'
-        base.default_to :run
       end
     end
 
