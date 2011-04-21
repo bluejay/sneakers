@@ -2,6 +2,7 @@ module Sneakers
   ROOT = File.join(File.dirname(__FILE__), "sneakers")
 
   require "rack"
+  require "eventmachine"
   require "fiber"
   require "logger"
 
