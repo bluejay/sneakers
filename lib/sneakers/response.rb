@@ -19,8 +19,9 @@ module Sneakers
       @body   = [] # Defaults to a regular body
       
       # Other attributes of the response
-      @writer = lambda { |x| self.body << x    }
+      @writer = lambda { |x| self.body << x }
       @length = 0 # Content-Length
+      
       @deferred = false
       
       @callback = env['async.callback']
@@ -42,7 +43,7 @@ module Sneakers
     def write(str)
       @writer.call(str.to_s)
     end
-    
+
     def done
       unless @deferred      
         if [204, 304].include?(status.to_i)
@@ -54,7 +55,7 @@ module Sneakers
       end
     end
     
-    def complete(&block)
+    def complete()
       @deferred ? 
         body.succeed : done
     end

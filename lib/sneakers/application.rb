@@ -1,5 +1,3 @@
-require "fiber"
-
 module Sneakers
   class Application
     include Sneakers::Controller

@@ -5,6 +5,8 @@ module Sneakers
     include Sneakers::Logger
     include Sneakers::Deferrable
 
+    DEFAULT_ACTION_KEY = 'sneakers.action'
+
     # The response.
     #
     # @return [Sneakers::Reponse]
@@ -22,16 +24,16 @@ module Sneakers
 
     # Call the action.
     def call!(env, *args)
+      # Sets the instance variables, especially the response
+      @env      = env
+      @response = Sneakers::Response.new(env)
+    
       # A preprocessing method
       before_call() if respond_to?(:before_call)
       
       # Determines the action to be called
       klass = self.class
       action = env[klass.env_action_key] || @action || :index
-      
-      # Sets the instance variables, especially the response
-      @env      = env
-      @response = Sneakers::Response.new(env)
       
       # A fiber wrapper for the action
       @fiber = Fiber.new do
@@ -84,10 +86,9 @@ module Sneakers
       end
       
       def self.extended(base)
-        base.action_key 'sneakers.action'
+        base.action_key DEFAULT_ACTION_KEY
       end
     end
-
 
     def self.included(base)
       base.instance_eval do

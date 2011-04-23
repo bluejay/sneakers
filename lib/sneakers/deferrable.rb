@@ -2,7 +2,7 @@ module Sneakers
   module Deferrable
   
     def task(&block)
-      callback = Proc.new do |result|
+      callback = lambda do |result|
         @fiber.resume result
       end
       EM::defer(block, callback)
