@@ -34,10 +34,17 @@ module Sneakers
     end
     
     def defer
-      @deferred = true
-      @body = Sneakers::DeferrableBody.new   
+      original_body = @body
+      @body = Sneakers::DeferrableBody.new
       @writer = lambda { |x| @body.call(x) }
-      @callback.call([status, header, body])
+      
+      original_body.each do |chunk|
+        write(chunk)
+      end
+
+      @deferred = true
+
+      @callback.call([status, header, body]) # Sends the headers
     end
     
     def write(str)
@@ -45,7 +52,7 @@ module Sneakers
     end
 
     def done
-      unless @deferred      
+      unless deferred?
         if [204, 304].include?(status.to_i)
           header.delete "Content-Type"
           @callback.call([status, header, []])
@@ -56,7 +63,7 @@ module Sneakers
     end
     
     def complete()
-      @deferred ? 
+      deferred? ? 
         body.succeed : done
     end
     
